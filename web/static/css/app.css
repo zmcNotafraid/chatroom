@@ -22,6 +22,8 @@ body {
 
 #messages {
   margin-top: 0px;
+  padding-left: 0;
+  padding-right: 0;
 }
 /* Custom page CSS
 -------------------------------------------------- */
