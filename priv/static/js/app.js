@@ -3881,6 +3881,8 @@ var App = function () {
       var $adi = $("#adi");
       var $tag = $("#tag");
       var $csrf = $("#csrf");
+      var $verified = $("#verified");
+      var $reputational = $("#reputational");
 
       var socket = new _phoenix.Socket("/socket", {
         logger: function logger(kind, msg, data) {
@@ -3916,7 +3918,7 @@ var App = function () {
       $input.off("keypress").on("keypress", function (e) {
         if (e.keyCode == 13) {
           if ($.trim($input.val()).length > 0) {
-            chan.push("new:msg", { csrf: $csrf.val(), userid: $userid.val(), user: $username.val(), sub: $usersub.val(), adi: $adi.val(), body: $input.val(), tag: $tag.val() });
+            chan.push("new:msg", { csrf: $csrf.val(), userid: $userid.val(), user: $username.val(), sub: $usersub.val(), adi: $adi.val(), body: $input.val(), tag: $tag.val(), verified: $verified.val(), reputational: $reputational.val() });
             $input.val("");
           }
         }
@@ -3925,11 +3927,14 @@ var App = function () {
       chan.on("history:msgs", function (msgs) {
         for (var i = 0; msgs.history.length > i; i++) {
           var logs = decodeURIComponent(escape(window.atob(msgs.history[i])));
+          console.info(logs);
           var msg = { user: logs.split("~")[1],
             sub: logs.split("~")[2],
             adi: logs.split("~")[3],
             body: logs.split("~")[4],
-            tag: logs.split("~")[5]
+            tag: logs.split("~")[5],
+            verified: logs.split("~")[6],
+            reputational: logs.split("~")[7]
           };
           $messages.append(_this.messageTemplate(msg));
           scrollTo(0, document.body.scrollHeight);
@@ -3952,6 +3957,8 @@ var App = function () {
       var username = this.sanitize(msg.user || "anonymous");
       var usersub = this.sanitize(msg.sub);
       var adi = this.sanitize(msg.adi || "false");
+      var verified = this.sanitize(msg.verified);
+      var reputational = this.sanitize(msg.reputational);
       var body = this.sanitize(msg.body);
       var tag = this.sanitize(msg.tag);
       if (username == "SYSTEM") {
@@ -3959,6 +3966,10 @@ var App = function () {
       }
       if (adi == "true") {
         return "<p><span class=\"" + adi + "\">" + username + "</span> <span class=\"" + tag + "\">&nbsp;</span> " + body + "</p>";
+      } else if (verified) {
+        return "<p><span>" + username + "</span> <span class=\"verified\">#" + usersub + "</span><span class=\"" + tag + "\">&nbsp;</span> " + body + "</p>";
+      } else if (reputational == "true") {
+        return "<p><span>" + username + "</span> <span class=\"reputational\">#" + usersub + "</span> <span class=\"" + tag + "\">&nbsp;</span>" + body + "</p>";
       } else {
         return "<p><span class=\"" + adi + "\">" + username + "</span><span class=\"sub\">#" + usersub + "</span> <span class=\"" + tag + "\">&nbsp;</span> " + body + "</p>";
       }

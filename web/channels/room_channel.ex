@@ -26,7 +26,7 @@ defmodule Chat.RoomChannel do
   end
 
   def handle_in("new:msg", msg, socket) do
-    [name, sub, adi, body, tag ,csrf] = [msg["user"], msg["sub"], msg["adi"], msg["body"], msg["tag"], msg["csrf"]]
+    [name, sub, adi, body, tag ,csrf, verified, reputational] = [msg["user"], msg["sub"], msg["adi"], msg["body"], msg["tag"], msg["csrf"], msg["verified"], msg["reputational"]]
     {:ok, redis_user_name} = Redis.command(~w(GET #{csrf}))
     if adi == "true" and String.contains? body, "X" do
       [_cmd, blocksub, min] = String.split(body, ":")
@@ -38,12 +38,12 @@ defmodule Chat.RoomChannel do
       {:ok, deusername} = Base.decode64(redis_user_name)
       if deusername == name and blocktime < 0 do
         if is_tag do
-          broadcast! socket, "new:msg", %{user: "SYSTEM",sub: "", adi: "", body: timestamp, tag: tag}
+          broadcast! socket, "new:msg", %{user: "SYSTEM",sub: "", adi: "", body: timestamp, tag: tag,  verified: verified, reputational: reputational}
           value = "#{timestamp}~#{"SYSTEM"}~~~#{timestamp}~"
           Redis.command(~w(ZADD zset #{timestamp} #{Base.encode64(value)}))
         end
-        broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, body: body, tag: tag}
-        value = "#{timestamp}~#{name}~#{sub}~#{adi}~#{body}~#{tag}"
+        broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, body: body, tag: tag, verified: verified, reputational: reputational}
+        value = "#{timestamp}~#{name}~#{sub}~#{adi}~#{body}~#{tag}~#{verified}~#{reputational}"
         Redis.command(~w(ZADD zset #{timestamp} #{Base.encode64(value)}))
       else
         Logger.debug "-- cache #{deusername} block #{name}##{sub} #{blocktime} sec"

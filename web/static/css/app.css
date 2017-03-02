@@ -52,6 +52,20 @@ code {
     text-align: right
 }
 
+.verified{
+  color: #f97509;
+  font-weight: 700;
+  overflow: hidden;
+  text-align: right
+}
+
+.reputational{
+  color: #6922a6;
+  font-weight: 700;
+  overflow: hidden;
+  text-align: right
+}
+
 .false {
     font-weight: 700;
     overflow: hidden;
