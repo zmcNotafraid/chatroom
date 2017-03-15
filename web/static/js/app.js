@@ -67,7 +67,7 @@ class App {
     let body     = this.sanitize(msg.body)
     let tag      = this.sanitize(msg.tag)
     if (username == "SYSTEM") {
-      return(`<br/><p class="text-center"><i class="bg-info">${moment(body * 1000).fromNow()}</i></p>`)
+      return(`<p class="text-center"><span class="time">${moment(body * 1000).fromNow()}</span></p>`)
     }
     if (adi == "true") {
       return(`<p><span class="${adi}">${username}</span> <span class="${tag}">&nbsp;</span> ${body}</p>`)

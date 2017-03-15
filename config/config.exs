@@ -5,7 +5,9 @@ config :chat, Chat.Endpoint,
   root: Path.expand("..", __DIR__),
   secret_key_base: "xxx",
   debug_errors: false,
-  pubsub: [name: Chat.PubSub, adapter: Phoenix.PubSub.PG2]
+  pubsub: [name: Chat.PubSub, adapter: Phoenix.PubSub.PG2],
+  check_origin: ["https://bcachat.com",
+                     "//bcachat.com"]
 
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

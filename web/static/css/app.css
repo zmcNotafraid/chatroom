@@ -45,6 +45,10 @@ code {
   font-size: 80%;
 }
 
+p {
+  margin: 0 0 6px;
+}
+
 .true {
     color: #007dc5;
     font-weight: 700;
@@ -53,6 +57,7 @@ code {
 }
 
 .false {
+    color: #767676;
     font-weight: 700;
     overflow: hidden;
     text-align: right
@@ -62,4 +67,12 @@ code {
   color: #aaa;
   font-size: 10px;
   font-weight: 100;
+}
+
+.time {
+  padding: 2px 4px;
+  font-size: 90%;
+  color: #fff;
+  background-color: #ccc;
+  border-radius: 4px;
 }

@@ -43,7 +43,7 @@ defmodule Chat.RoomChannel do
       if deusername == name and blocktime < 0 do
         if is_tag do
           broadcast! socket, "new:msg", %{user: "SYSTEM",sub: "", adi: "", body: timestamp, tag: tag}
-          value = "#{timestamp}~#{"SYSTEM"}~~~#{timestamp}~"
+          value = "#{timestamp}~SYSTEM~sub~adi~#{timestamp}~tag"
           Redis.command(~w(ZADD zset #{timestamp} #{Base.encode64(value)}))
         end
         broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, body: body, tag: tag}
@@ -65,9 +65,11 @@ defmodule Chat.RoomChannel do
       {:ok, [first, last]} ->
         {:ok, defirst} = Base.decode64(first)
         {:ok, delast} = Base.decode64(last)
-        [first_time, _user, _sub ,_adi, _msg, _tag] = String.split(defirst, "~")
-        [last_time, _user, _sub ,_adi, _msg, _tag] = String.split(delast, "~")
-        String.to_integer(last_time) - String.to_integer(first_time) > 600
+        ftime = String.split(defirst, "~")
+        ltime = String.split(delast, "~")
+        [first_time] = Enum.take(ftime, 1)
+        [last_time] = Enum.take(ltime, 1)
+        String.to_integer(last_time) - String.to_integer(first_time) > 120
     end
   end
 

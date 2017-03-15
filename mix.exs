@@ -13,12 +13,12 @@ defmodule Chat.Mixfile do
   def application do
     [mod: {Chat, []},
      applications: [:phoenix, :phoenix_html, :cowboy, :logger,
-                   :redix, :ssl]]
+                   :redix]]
   end
 
   defp deps do
     [{:phoenix, "~> 1.2"},
-     {:phoenix_ecto, "~> 3.0.1"},
+     {:ecto, "~> 2.0.4"},
      {:phoenix_html, "~> 2.6.2"},
      {:gettext, "~> 0.9"},
      {:cowboy, "~> 1.0"},
