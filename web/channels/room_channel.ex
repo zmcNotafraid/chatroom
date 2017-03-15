@@ -32,7 +32,11 @@ defmodule Chat.RoomChannel do
       [_cmd, blocksub, min] = String.split(body, ":")
       Redis.command(~w(SET #{blocksub} #{1}))
       Redis.command(~w(EXPIRE #{blocksub} #{String.to_integer(min)*60}))
-      broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, body: "用户***##{blocksub} 被 #{name} 禁言 #{min} 分钟", tag: tag}
+      if String.to_integer(min) == 0 do
+        broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, body: "用户***##{blocksub} 已被 #{name} 解禁", tag: tag}
+      else
+        broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, body: "用户***##{blocksub} 被 #{name} 禁言 #{min} 分钟", tag: tag}
+      end
     else
       {:ok, blocktime} = Redis.command(~w(TTL #{sub}))
       {:ok, deusername} = Base.decode64(redis_user_name)
