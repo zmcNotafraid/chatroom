@@ -5,10 +5,7 @@ config :chat, Chat.Endpoint,
   root: Path.expand("..", __DIR__),
   secret_key_base: "xxx",
   debug_errors: false,
-  pubsub: [name: Chat.PubSub, adapter: Phoenix.PubSub.PG2],
-  https: [port: 4443, otp_app: :chat,
-          keyfile: "priv/ssl/server.key",
-          certfile: "priv/ssl/server.crt"]
+  pubsub: [name: Chat.PubSub, adapter: Phoenix.PubSub.PG2]
 
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
