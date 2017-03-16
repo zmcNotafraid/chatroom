@@ -4,7 +4,7 @@ defmodule Chat.PageController do
   def index(conn, %{"xtoken" => jwt}) do
     if jwt != String.trim("") do
       csrf = SecureRandom.urlsafe_base64
-      {:ok, claims} = JsonWebToken.verify(jwt, %{key: "xxx"})
+      {:ok, claims} = JsonWebToken.verify(jwt, %{key: Application.get_env(:chat, Chat.Endpoint)[:private_key]})
       enusername = Base.encode64(claims[:iss])
       Redis.command(~w(SET #{csrf} #{enusername}))
       {:ok, deusername} = Base.decode64(enusername)

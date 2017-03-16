@@ -1,8 +1,8 @@
 use Mix.Config
 
 config :chat, Chat.Endpoint,
-  http: [port: {:system, "PORT"}],
-  url: [host: "bcachat.com"]
+  http: [port: System.get_env("PORT")],
+  url: [host: Application.get_env(:chat, Chat.Endpoint)[:host]]
 
 config :logger, level: :info
 
