@@ -5,7 +5,7 @@ defmodule Chat.RoomChannel do
 
   def join("rooms:lobby", message, socket) do
     Process.flag(:trap_exit, true)
-    send(self, {:after_join, message})
+    send(self(), {:after_join, message})
     {:ok, socket}
   end
 
@@ -41,14 +41,14 @@ defmodule Chat.RoomChannel do
       {:ok, blocktime} = Redis.command(~w(TTL #{sub}))
       {:ok, deusername} = Base.decode64(redis_user_name)
       if deusername == name and blocktime < 0 do
-        if is_tag do
-          broadcast! socket, "new:msg", %{user: "SYSTEM",sub: "", adi: "", body: timestamp, tag: tag}
-          value = "#{timestamp}~SYSTEM~sub~adi~#{timestamp}~tag"
-          Redis.command(~w(ZADD zset #{timestamp} #{Base.encode64(value)}))
+        if is_tag() do
+          broadcast! socket, "new:msg", %{user: "SYSTEM",sub: "", adi: "", body: timestamp(), tag: tag}
+          value = "#{timestamp()}~SYSTEM~sub~adi~#{timestamp()}~tag"
+          Redis.command(~w(ZADD zset #{timestamp()} #{Base.encode64(value)}))
         end
         broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, body: body, tag: tag}
-        value = "#{timestamp}~#{name}~#{sub}~#{adi}~#{body}~#{tag}"
-        Redis.command(~w(ZADD zset #{timestamp} #{Base.encode64(value)}))
+        value = "#{timestamp()}~#{name}~#{sub}~#{adi}~#{body}~#{tag}"
+        Redis.command(~w(ZADD zset #{timestamp()} #{Base.encode64(value)}))
       else
         Logger.debug "-- cache #{deusername} block #{name}##{sub} #{blocktime} sec"
         push socket, "new:msg", %{user: name, sub: sub, adi: adi, body: "您在#{blocktime}秒后才可以发言" , tag: tag}
@@ -74,7 +74,7 @@ defmodule Chat.RoomChannel do
   end
 
   def datetime do
-    {:ok, dt} = DateTime.from_unix(timestamp)
+    {:ok, dt} = DateTime.from_unix(timestamp())
     DateTime.to_iso8601(dt)
   end
 

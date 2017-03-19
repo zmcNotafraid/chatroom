@@ -1,27 +1,58 @@
-# Yunbi Chat
+An open-source chatroom
+=======================
 
-## Deploy
+This chatroom is only chat through phoenix websocket.You need to pass jwt token to include user info.
 
-#### Rails
+
+## Getting Started
+
+### Phoenix
+
+#### development
+##### 1. replace private_key in config/dev.exs
+
+##### 2. install dependencies and run server
+
+```elixr
+mix deps.get && mix phoenix.server
+```
+
+##### 3. Using a browser, go to `http://localhost:4000/?xtoken=`
+
+#### production
+##### 1. replace private_key and host in config/prod.secret.exs
+
+##### 2. how to deploy
+
+use [distillery](https://github.com/bitwalker/distillery)
+
+
+### Rails
+
+#### 1. add jwt gem
+
+```ruby
+gem 'jwt'
+```
+#### 2. set a chat_token to include user info
+
 ```ruby
 # app/helpers/application_helper.rb
+CHATROOM_ADMIN_LIST = [1,....] #user id
+
 def chat_token
     payload = {
-      jti: current_user.id.to_s,
-      iss: current_user.nickname,
-      sub: Digest::MD5.hexdigest(current_user.email)[0...3].upcase,
-      adi: Settings.roles.chatroom.admin.include?(current_user.email)
+      jti: #user id
+      iss: #user name
+      sub: #user unique name
+      adi: #user is a admin or not
     }
-    JWT.encode payload, 'xxx', 'HS256'
-  end
+    JWT.encode payload, private_key, 'HS256' # same as phoenix private_key
+end
 ```
+#### 3. pass chat_token
+
 ```html
-# app/views/welcome/index.html.erb
-<iframe frameborder="0" name="Iframe1" src="https://bcachat.com:4443/?xtoken=<%= chat_token %>" 
-width="100%" height="350"></iframe>
-```
-#### Phoenix
-```elixir
-# web/controllers/page_controller.ex
-{:ok, claims} = JsonWebToken.verify(jwt, %{key: "xxx"})
+  <iframe frameborder="0" name="Iframe1" src="https://localhost:4000/?xtoken=<%= chatroom_token %>" width="100%" height="380" scrolling="no"></iframe>
+
 ```

@@ -2,13 +2,13 @@
 /_build
 /deps
 /*.ez
-
+/rel
+/config/prod.secret.exs
 # Generate on crash by the VM
 erl_crash.dump
 
 # Static artifacts
 /node_modules
-/priv/ssl
 /priv/static/*
 
 # Since we are building js and css from web/static,

@@ -2,7 +2,10 @@ use Mix.Config
 
 config :chat, Chat.Endpoint,
   http: [port: System.get_env("PORT")],
-  url: [host: Application.get_env(:chat, Chat.Endpoint)[:host]]
+  root: ".",
+  cache_static_manifest: "priv/static/manifest.json",
+  server: true,
+  version: Mix.Project.config[:version]
 
 config :logger, level: :info
 

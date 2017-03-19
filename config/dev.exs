@@ -1,7 +1,7 @@
 use Mix.Config
 
 config :chat, Chat.Endpoint,
-  http: [port: System.get_env("PORT") || 4000],
+  http: [port: 4000],
   private_key: "YOUR_PRIVATE_KEY",
   host: "localhost",
   debug_errors: true,
