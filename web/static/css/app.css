@@ -76,3 +76,21 @@ p {
   background-color: #ccc;
   border-radius: 4px;
 }
+
+.normal.believer{
+  color: #f4abf4;
+  font-size: 10px;
+  font-weight: 100;
+}
+
+.advanced.believer{
+  color: #e23be4;
+  font-size: 10px;
+  font-weight: 100;
+}
+
+.true.name{
+  color: #f57119;
+  font-size: 10px;
+  font-weight: 100;
+}
