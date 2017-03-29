@@ -53,7 +53,9 @@ class App {
 
     chan.on("new:msg", msg => {
       $messages.append(this.messageTemplate(msg))
-      scrollTo(0, document.body.scrollHeight)
+      if (document.body.scrollHeight - window.pageYOffset < 1000 ){
+        scrollTo(0, document.body.scrollHeight)
+      }
     })
 
   }
