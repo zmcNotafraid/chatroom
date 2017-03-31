@@ -8,7 +8,6 @@
       <input id="username" type="hidden" value="<%= @username %>" class="form-control" />
       <input id="usersub" type="hidden" value="<%= @usersub %>" class="form-control" />
       <input id="adi" type="hidden" value="<%= @adi %>" class="form-control" />
-      <input id="tag" type="hidden" value="<%= @tag %>" class="form-control" />
       <input id="role" type="hidden" value="<%= @role %>" class="form-control" />
       </div><!-- /.col-lg-6 -->
       <div class="col-sm-12">
