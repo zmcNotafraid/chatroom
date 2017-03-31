@@ -12,11 +12,9 @@ defmodule Chat.PageController do
       if role == nil || (Redis.command(~w(TTL #{claims[:sub]}:role)) < 1) do
         role = ""
       end
-      Logger.info(role)
-      {:ok, deusername} = Base.decode64(enusername)
-      render conn, "index.html", userid: claims[:jti], username: deusername, usersub: claims[:sub], adi: claims[:adi], tag: claims[:tag], csrf: csrf, role: role
+      render conn, "index.html", userid: claims[:jti], username: claims[:iss], usersub: claims[:sub], adi: claims[:adi], csrf: csrf, role: role
     else
-      render conn, "index.html", userid: "", username: "", usersub: "", adi: "", tag: "", csrf: "", role: ""
+      render conn, "index.html", userid: "", username: "", usersub: "", adi: "", csrf: "", role: ""
     end
   end
 

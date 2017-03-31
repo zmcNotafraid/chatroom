@@ -10,7 +10,6 @@ class App {
     var $username  = $("#username")
     var $usersub   = $("#usersub")
     var $adi       = $("#adi")
-    var $tag       = $("#tag")
     var $csrf      = $("#csrf")
     var $role      = $("#role")
 
@@ -32,7 +31,7 @@ class App {
     $input.off("keypress").on("keypress", e => {
       if (e.keyCode == 13) {
         if ($.trim($input.val()).length > 0) {
-          chan.push("new:msg", {csrf: $csrf.val(), userid: $userid.val(), user: $username.val(), sub: $usersub.val(), adi: $adi.val(), body: $input.val(), tag: $tag.val(), role: $role.val()})
+          chan.push("new:msg", {csrf: $csrf.val(), userid: $userid.val(), user: $username.val(), sub: $usersub.val(), adi: $adi.val(), body: $input.val(), role: $role.val()})
           $input.val("")
         }
       }
@@ -41,19 +40,16 @@ class App {
     chan.on("history:msgs", msgs => {
       for (var i = 0; msgs.history.length > i; i++) {
         var logs = decodeURIComponent(escape(window.atob( msgs.history[i] )))
-        console.info("=============")
-        console.info(logs)
         var msg = {user : logs.split("~")[1],
                   sub : logs.split("~")[2], 
                   adi : logs.split("~")[3],
                   body : logs.split("~")[4],
-                  tag: logs.split("~")[5],
-                  role: logs.split("~")[6]
+                  role: logs.split("~")[5]
 
         }
         $messages.append(this.messageTemplate(msg))
-        scrollTo(0, document.body.scrollHeight)
       }
+      scrollTo(0, document.body.scrollHeight)
     })
 
     chan.on("new:msg", msg => {
@@ -72,24 +68,23 @@ class App {
     let usersub  = this.sanitize(msg.sub)
     let adi      = this.sanitize(msg.adi || "false")
     let body     = this.sanitize(msg.body)
-    let tag      = this.sanitize(msg.tag)
     let role      = this.sanitize(msg.role)
     if (username == "SYSTEM") {
       return(`<p class="text-center"><span class="time">${moment(body * 1000).fromNow()}</span></p>`)
     }
     console.info(role == "normal_believer")
     if (adi == "true") {
-      return(`<p><span class="${adi}">${username}</span> <span class="${tag}">&nbsp;</span> ${body}</p>`)
+      return(`<p><span class="${adi}">${username}</span> <span>&nbsp;</span> ${body}</p>`)
     } else if (role == "normal_believer") {
-      return(`<p><span class="${adi}">${username}</span><span class="normal believer">#${usersub}</span> <span class="${tag}">&nbsp;</span> ${body}</p>`)
+      return(`<p><span class="${adi}">${username}</span><span class="normal believer">#${usersub}</span> <span>&nbsp;</span> ${body}</p>`)
     }
     else if (role == "advanced_believer") {
-      return(`<p><span class="${adi}">${username}</span><span class="advanced believer">#${usersub}</span> <span class="${tag}">&nbsp;</span> ${body}</p>`)
+      return(`<p><span class="${adi}">${username}</span><span class="advanced believer">#${usersub}</span> <span>&nbsp;</span> ${body}</p>`)
     }
     else if (role == "true_name") {
-      return(`<p><span class="${adi}">${username}</span><span class="true name">#${usersub}</span> <span class="${tag}">&nbsp;</span> ${body}</p>`)
+      return(`<p><span class="${adi}">${username}</span><span class="true name">#${usersub}</span> <span>&nbsp;</span> ${body}</p>`)
     }else{
-      return(`<p><span class="${adi}">${username}</span><span class="sub">#${usersub}</span> <span class="${tag}">&nbsp;</span> ${body}</p>`)
+      return(`<p><span class="${adi}">${username}</span><span class="sub">#${usersub}</span> <span>&nbsp;</span> ${body}</p>`)
     }
   }
 
