@@ -1,18 +1,13 @@
 <div id="messages" class="container"></div>
+<input id="message-input" class="form-control" placeholder="回车发送聊天内容 / 点聊天室图标有惊喜！" />
 <div id="footer">
   <div class="container">
     <div class="row">
-      <div class="col-sm-2">
       <input id="csrf" type="hidden" value="<%= @csrf %>" class="form-control" />
       <input id="userid" type="hidden" value="<%= @userid %>" class="form-control" />
       <input id="username" type="hidden" value="<%= @username %>" class="form-control" />
       <input id="usersub" type="hidden" value="<%= @usersub %>" class="form-control" />
       <input id="adi" type="hidden" value="<%= @adi %>" class="form-control" />
-      <input id="role" type="hidden" value="<%= @role %>" class="form-control" />
-      </div><!-- /.col-lg-6 -->
-      <div class="col-sm-12">
-        <input id="message-input" class="form-control" placeholder="回车发送聊天内容 / 点聊天室图标有惊喜！" />
-      </div><!-- /.col-lg-6 -->
     </div><!-- /.row -->
   </div>
 </div>
