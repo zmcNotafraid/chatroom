@@ -1,72 +1,44 @@
-/* Sticky footer styles
--------------------------------------------------- */
 html {
   position: relative;
   min-height: 100%;
 }
-body {
-  /* Margin bottom by footer height 
-  margin-top: 50px; */
-  margin-bottom: 60px;
-}
-
-#footer {
-  position: fixed;
-  bottom: 0px;
-  width: 100%;
-  /* Set the fixed height of the footer here */
-  height: 60px;
-  padding-top: 1em;
-  background-color: #f5f5f5;
-}
 
 #messages {
-  margin-top: 0px;
+  margin-top: 0;
+  margin-bottom: 0.5em;
   padding-left: 0;
   padding-right: 0;
 }
-/* Custom page CSS
--------------------------------------------------- */
-/* Not required for template or sticky footer method. */
-
-body > .container {
-  padding: 40px 15px 0;
-}
-.container .text-muted {
-  margin: 20px 0;
+p{
+  margin: 0 0 6px; 
 }
 
-#footer > .container {
-  padding-right: 15px;
-  padding-left: 15px;
+.name::after
+{
+  content: ":";
+  color: grey;
+  padding-right:0.6em;
 }
 
-code {
-  font-size: 80%;
+p.admin > span:first-child {
+  color: #5f74c4;
+  overflow: hidden;
 }
 
-p {
-  margin: 0 0 6px;
+p.admin > span:last-child {
+  color: #5f74c4;
+  font-size: 0.875em;
 }
 
-.true {
-    color: #007dc5;
-    font-weight: 700;
-    overflow: hidden;
-    text-align: right
+p.normal > span:first-child {
+  color: #767676;
+  overflow: hidden;
 }
 
-.false {
-    color: #767676;
-    font-weight: 700;
-    overflow: hidden;
-    text-align: right
-}
-
-.sub {
+p.normal_believer > span:nth-child(2), p.advanced_believer > span:nth-child(2), p.true_name > span:nth-child(2), p.normal > span:nth-child(2)  {
   color: #aaa;
-  font-size: 10px;
-  font-weight: 100;
+  font-size: 0.8em;
+  display: none;
 }
 
 .time {
@@ -77,20 +49,27 @@ p {
   border-radius: 4px;
 }
 
-.normal.believer{
-  color: #f4abf4;
-  font-size: 10px;
-  font-weight: 100;
+.name{
+  font-weight: bold; 
+  font-size: 0.875em;
 }
 
-.advanced.believer{
-  color: #e23be4;
-  font-size: 10px;
-  font-weight: 100;
+p.normal_believer > span:last-child,
+p.normal > span:last-child, p.high_believer > span:last-child,
+p.true_name > span:last-child
+{
+  font-size: 0.875em;
+  color: grey;
 }
 
-.true.name{
-  color: #f57119;
-  font-size: 10px;
-  font-weight: 100;
+p.normal_believer > span:first-child{
+  color: #cd8dbf;
+}
+
+p.advanced_believer > span:first-child{
+  color: #bf59a9;
+}
+
+p.true_name > span:first-child{
+  color: #f98044;
 }

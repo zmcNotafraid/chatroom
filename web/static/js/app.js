@@ -11,7 +11,6 @@ class App {
     var $usersub   = $("#usersub")
     var $adi       = $("#adi")
     var $csrf      = $("#csrf")
-    var $role      = $("#role")
 
     let socket = new Socket("/socket", {
       logger: ((kind, msg, data) => { console.log(`${kind}: ${msg}`, data) })
@@ -31,8 +30,8 @@ class App {
     $input.off("keypress").on("keypress", e => {
       if (e.keyCode == 13) {
         if ($.trim($input.val()).length > 0) {
-          chan.push("new:msg", {csrf: $csrf.val(), userid: $userid.val(), user: $username.val(), sub: $usersub.val(), adi: $adi.val(), body: $input.val(), role: $role.val()})
-          $input.val("")
+          chan.push("new:msg", {csrf: $csrf.val(), userid: $userid.val(), user: $username.val(), sub: $usersub.val(), adi: $adi.val(), body: $input.val()})
+          $input.val("");
         }
       }
     })
@@ -59,6 +58,17 @@ class App {
       }
     })
 
+
+    $(document).on('dblclick','.name',function(){
+      if ($adi[0].value == "true"){
+        if($(this).next().css("display") == "none"){
+          $(this).next().css("display", "inline-block"); 
+        }else{
+          $(this).next().css("display", "none"); 
+        }
+      }
+    });
+
   }
 
   static sanitize(html){ return $("<div/>").text(html).html() }
@@ -72,22 +82,14 @@ class App {
     if (username == "SYSTEM") {
       return(`<p class="text-center"><span class="time">${moment(body * 1000).fromNow()}</span></p>`)
     }
-    console.info(role == "normal_believer")
     if (adi == "true") {
-      return(`<p><span class="${adi}">${username}</span> <span>&nbsp;</span> ${body}</p>`)
-    } else if (role == "normal_believer") {
-      return(`<p><span class="${adi}">${username}</span><span class="normal believer">#${usersub}</span> <span>&nbsp;</span> ${body}</p>`)
-    }
-    else if (role == "advanced_believer") {
-      return(`<p><span class="${adi}">${username}</span><span class="advanced believer">#${usersub}</span> <span>&nbsp;</span> ${body}</p>`)
-    }
-    else if (role == "true_name") {
-      return(`<p><span class="${adi}">${username}</span><span class="true name">#${usersub}</span> <span>&nbsp;</span> ${body}</p>`)
-    }else{
-      return(`<p><span class="${adi}">${username}</span><span class="sub">#${usersub}</span> <span>&nbsp;</span> ${body}</p>`)
+      return(`<p class="admin"><span class="name">${username}</span><span>${body}</span></p>`)
+    } else if (role != "") {
+      return(`<p class="${role}"><span class="name">${username}</span><span>${usersub}</span><span>${body}</span></p>`)
+    } else{
+      return(`<p class="normal"><span class="name">${username}</span><span>${usersub}</span><span>${body}</span></p>`)
     }
   }
-
 }
 
 $( () => App.init() )

@@ -24,7 +24,7 @@ mix deps.get && mix phoenix.server
 
 ##### 2. how to deploy
 
-use [distillery](https://github.com/bitwalker/distillery)
+  use [distillery](https://github.com/bitwalker/distillery)
 
 
 ### Rails

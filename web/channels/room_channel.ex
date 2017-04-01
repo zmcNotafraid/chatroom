@@ -19,55 +19,60 @@ defmodule Chat.RoomChannel do
   end
 
   def handle_info({:after_join, _msg}, socket) do
-    {:ok, history} = Redis.command(~w(ZRANGE zset -20 -1))
+    {:ok, history} = Redis.command(~w(ZRANGE zset -100 -1))
     push socket, "history:msgs", %{ history: history }
     push socket, "join", %{status: "connected"}
     {:noreply, socket}
   end
 
   def handle_in("new:msg", msg, socket) do
-    [name, sub, adi, body, csrf, role] = [msg["user"], msg["sub"], msg["adi"], msg["body"], msg["csrf"], msg["role"]]
+    [name, sub, adi, body, csrf] = [msg["user"], msg["sub"], msg["adi"], msg["body"], msg["csrf"]]
+    {:ok, role} = Redis.command(~w(get #{sub}:role))
+    if role == nil do
+      role = ""
+    end
     {:ok, redis_user_name} = Redis.command(~w(GET #{csrf}))
-    if adi == "true" && ((String.contains? body, "X") || (String.contains? body, "K") || 
-                         (String.contains? body, "G") || (String.contains? body, "V")) do
+    if adi == "true" && (String.contains? body, "X:" || "K:" || "G:" || "V:") do
+      [_cmd, blocksub, min] = String.split(body, ":")
       cond do
         String.contains? body, "X" ->
-          [_cmd, blocksub, min] = String.split(body, ":")
           Redis.command(~w(SET #{blocksub} #{1}))
           Redis.command(~w(EXPIRE #{blocksub} #{String.to_integer(min)*60}))
           if String.to_integer(min) == 0 do
-            broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, body: "用户***##{blocksub} 已被 #{name} 解禁"}
+            broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, role: role, body: "用户***##{blocksub} 已被 #{name} 解禁"}
           else
-            broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, body: "用户***##{blocksub} 被 #{name} 禁言 #{min} 分钟"}
+            broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, role: role, body: "用户***##{blocksub} 被 #{name} 禁言 #{min} 分钟"}
           end
         String.contains? body, "K" ->
-          [_cmd, blocksub, min] = String.split(body, ":")
           Redis.command(~w(SET #{blocksub}:role normal_believer))
           Redis.command(~w(EXPIRE #{blocksub}:role #{String.to_integer(min)*60}))
-          broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, body: "用户***##{blocksub} 被 #{name} 设为普通可信用户"}
+          broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, role: role, body: "用户***##{blocksub} 被 #{name} 设为普通可信用户"}
         String.contains? body, "G" ->
-          [_cmd, blocksub, min] = String.split(body, ":")
           Redis.command(~w(SET #{blocksub}:role advanced_believer))
           Redis.command(~w(EXPIRE #{blocksub}:role #{String.to_integer(min)*60}))
-          broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, body: "用户***##{blocksub} 被 #{name} 设为高级可信用户"}
+          broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, role: role, body: "用户***##{blocksub} 被 #{name} 设为高级可信用户"}
         String.contains? body, "V" ->
-          [_cmd, blocksub, min] = String.split(body, ":")
           Redis.command(~w(SET #{blocksub}:role true_name))
           Redis.command(~w(EXPIRE #{blocksub}:role #{String.to_integer(min)*60}))
-          broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, body: "用户***##{blocksub} 被 #{name} 设为实名验证用户"}
+          broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, role: role, body: "用户***##{blocksub} 被 #{name} 设为实名验证用户"}
       end
     else
       {:ok, blocktime} = Redis.command(~w(TTL #{sub}))
       {:ok, deusername} = Base.decode64(redis_user_name)
       if deusername == name and blocktime < 0 do
-        if is_tag() do
-          broadcast! socket, "new:msg", %{user: "SYSTEM",sub: "", adi: "", body: timestamp(), role: role}
-          value = "#{timestamp()}~SYSTEM~sub~adi~#{timestamp()}~#{role}"
+        if name == "Member" || name == "用户" do
+          push socket, "new:msg", %{user: name, sub: sub, adi: adi, body: "请修改昵称后再发言", role: role}
+          {:error, %{reason: "init nickname"}}
+        else
+          if is_tag() do
+            broadcast! socket, "new:msg", %{user: "SYSTEM",sub: "", adi: "", body: timestamp(), role: role}
+            value = "#{timestamp()}~SYSTEM~sub~adi~#{timestamp()}~#{role}"
+            Redis.command(~w(ZADD zset #{timestamp()} #{Base.encode64(value)}))
+          end
+          broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, body: body, role: role}
+          value = "#{timestamp()}~#{name}~#{sub}~#{adi}~#{body}~#{role}"
           Redis.command(~w(ZADD zset #{timestamp()} #{Base.encode64(value)}))
         end
-        broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, body: body, role: role}
-        value = "#{timestamp()}~#{name}~#{sub}~#{adi}~#{body}~#{role}"
-        Redis.command(~w(ZADD zset #{timestamp()} #{Base.encode64(value)}))
       else
         Logger.debug "-- cache #{deusername} block #{name}##{sub} #{blocktime} sec"
         push socket, "new:msg", %{user: name, sub: sub, adi: adi, body: "您在#{blocktime}秒后才可以发言", role: role}
