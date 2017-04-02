@@ -27,7 +27,7 @@ p.admin > span:first-child {
 
 p.admin > span:last-child {
   color: #5f74c4;
-  font-size: 0.875em;
+  font-size: 0.9em;
 }
 
 p.normal > span:first-child {
@@ -51,7 +51,7 @@ p.normal_believer > span:nth-child(2), p.advanced_believer > span:nth-child(2), 
 
 .name{
   font-weight: bold; 
-  font-size: 0.875em;
+  font-size: 0.9em;
 }
 
 p.normal_believer > span:last-child,

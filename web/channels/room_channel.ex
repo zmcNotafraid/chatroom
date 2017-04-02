@@ -32,7 +32,7 @@ defmodule Chat.RoomChannel do
       role = ""
     end
     {:ok, redis_user_name} = Redis.command(~w(GET #{csrf}))
-    if adi == "true" && (String.contains? body, "X:" || "K:" || "G:" || "V:") do
+    if adi == "true" && (String.contains? body, ["X:", "K:", "G:", "V:"]) do
       [_cmd, blocksub, min] = String.split(body, ":")
       cond do
         String.contains? body, "X" ->
