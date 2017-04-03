@@ -17,7 +17,7 @@ p{
 {
   content: ":";
   color: grey;
-  padding-right:0.6em;
+  padding-right:0.8em;
 }
 
 p.admin > span:first-child {
@@ -27,7 +27,7 @@ p.admin > span:first-child {
 
 p.admin > span:last-child {
   color: #5f74c4;
-  font-size: 0.9em;
+  font-size: 1.1em;
 }
 
 p.normal > span:first-child {
@@ -51,19 +51,19 @@ p.normal_believer > span:nth-child(2), p.advanced_believer > span:nth-child(2), 
 
 .name{
   font-weight: bold; 
-  font-size: 0.9em;
+  font-size: 1.1em;
 }
 
 p.normal_believer > span:last-child,
 p.normal > span:last-child, p.advanced_believer > span:last-child,
 p.true_name > span:last-child
 {
-  font-size: 0.875em;
+  font-size: 1.1em;
   color: grey;
 }
 
 p.normal_believer > span:first-child{
-  color: #cd8dbf;
+  color: #fa9d96;
 }
 
 p.advanced_believer > span:first-child{
