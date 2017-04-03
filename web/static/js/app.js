@@ -38,13 +38,13 @@ class App {
 
     chan.on("history:msgs", msgs => {
       for (var i = 0; msgs.history.length > i; i++) {
-        var logs = decodeURIComponent(escape(window.atob( msgs.history[i] )))
+        var tempLogs = decodeURIComponent(escape(window.atob( msgs.history[i] )))
+        var logs = tempLogs.replace(/(\~)+/g, "~");
         var msg = {user : logs.split("~")[1],
                   sub : logs.split("~")[2], 
                   adi : logs.split("~")[3],
                   body : logs.split("~")[4],
                   role: logs.split("~")[5]
-
         }
         $messages.append(this.messageTemplate(msg))
       }
@@ -58,7 +58,6 @@ class App {
       }
     })
 
-
     $(document).on('dblclick','.name',function(){
       if ($adi[0].value == "true"){
         if($(this).next().css("display") == "none"){
@@ -68,7 +67,6 @@ class App {
         }
       }
     });
-
   }
 
   static sanitize(html){ return $("<div/>").text(html).html() }
