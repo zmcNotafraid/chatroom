@@ -46,15 +46,18 @@ defmodule Chat.RoomChannel do
         String.contains? body, "K" ->
           Redis.command(~w(SET #{blocksub}:role normal_believer))
           Redis.command(~w(EXPIRE #{blocksub}:role #{String.to_integer(min)*60}))
-          broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, role: role, body: "用户***##{blocksub} 被 #{name} 设为普通可信用户"}
+          push socket, "new:msg", %{user: name, sub: sub, adi: adi, role: role, body: "用户***##{blocksub} 被 #{name} 设为热心用户"}
+          {:noreply, socket}
         String.contains? body, "G" ->
           Redis.command(~w(SET #{blocksub}:role advanced_believer))
           Redis.command(~w(EXPIRE #{blocksub}:role #{String.to_integer(min)*60}))
-          broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, role: role, body: "用户***##{blocksub} 被 #{name} 设为高级可信用户"}
+          push socket, "new:msg", %{user: name, sub: sub, adi: adi, role: role, body: "用户***##{blocksub} 被 #{name} 设为高级用户"}
+          {:noreply, socket}
         String.contains? body, "V" ->
           Redis.command(~w(SET #{blocksub}:role true_name))
           Redis.command(~w(EXPIRE #{blocksub}:role #{String.to_integer(min)*60}))
-          broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, role: role, body: "用户***##{blocksub} 被 #{name} 设为实名验证用户"}
+          push socket, "new:msg", %{user: name, sub: sub, adi: adi, role: role, body: "用户***##{blocksub} 被 #{name} 设为认证嘉宾"}
+          {:noreply, socket}
       end
     else
       {:ok, blocktime} = Redis.command(~w(TTL #{sub}))

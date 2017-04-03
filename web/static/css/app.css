@@ -55,7 +55,7 @@ p.normal_believer > span:nth-child(2), p.advanced_believer > span:nth-child(2), 
 }
 
 p.normal_believer > span:last-child,
-p.normal > span:last-child, p.high_believer > span:last-child,
+p.normal > span:last-child, p.advanced_believer > span:last-child,
 p.true_name > span:last-child
 {
   font-size: 0.875em;
