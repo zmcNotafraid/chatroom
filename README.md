@@ -3,15 +3,16 @@ An open-source chatroom
 
 This chatroom is only chat through phoenix websocket.You need to pass jwt token to include user info.
 
-
 ## Getting Started
 
 ### Phoenix
 
 #### development
-##### 1. replace private_key in config/dev.exs
+##### 1. copy config/dev.exs.example to config/dev.exs
 
-##### 2. install dependencies and run server
+##### 2. replace private_key in config/dev.exs
+
+##### 3. install dependencies and run server
 
 ```elixr
 mix deps.get && mix phoenix.server
@@ -20,9 +21,12 @@ mix deps.get && mix phoenix.server
 ##### 3. Using a browser, go to `http://localhost:4000/?xtoken=`
 
 #### production
-##### 1. replace private_key and host in config/prod.secret.exs
 
-##### 2. how to deploy
+##### 1. copy config/prod.secret.exs.example to config/prod.secret.exs
+
+##### 2. replace private_key and host in config/prod.secret.exs
+
+##### 3. how to deploy
 
   use [distillery](https://github.com/bitwalker/distillery)
 
