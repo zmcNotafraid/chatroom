@@ -10,7 +10,7 @@ This chatroom is only chat through phoenix websocket.You need to pass jwt token 
 #### development
 ##### 1. copy config/dev.exs.example to config/dev.exs
 
-##### 2. replace private_key in config/dev.exs
+##### 2. replace private_key and secret_key_base in config/dev.exs
 
 ##### 3. install dependencies and run server
 
@@ -24,7 +24,7 @@ mix deps.get && mix phoenix.server
 
 ##### 1. copy config/prod.secret.exs.example to config/prod.secret.exs
 
-##### 2. replace private_key and host in config/prod.secret.exs
+##### 2. replace private_key、secret_key_base、host and redis_host in config/prod.secret.exs
 
 ##### 3. how to deploy
 
@@ -46,7 +46,6 @@ CHATROOM_ADMIN_LIST = [1,....] #user id
 
 def chat_token
     payload = {
-      jti: #user id
       iss: #user name
       sub: #user unique name
       adi: #user is a admin or not
@@ -57,6 +56,6 @@ end
 #### 3. pass chat_token
 
 ```html
-  <iframe frameborder="0" name="Iframe1" src="https://localhost:4000/?xtoken=<%= chatroom_token %>" width="100%" height="380" scrolling="no"></iframe>
+  <iframe frameborder="0" name="Iframe1" src="https://localhost:4000/?xtoken=<%= chatroom_token %>" width="100%" height="450" scrolling="no"></iframe>
 
 ```

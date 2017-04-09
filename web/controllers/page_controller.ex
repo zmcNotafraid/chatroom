@@ -2,15 +2,27 @@ defmodule Chat.PageController do
   use Chat.Web, :controller
   require Logger
 
-  def index(conn, %{"xtoken" => jwt}) do
-    if jwt != String.trim("") do
-      csrf = SecureRandom.urlsafe_base64
-      {:ok, claims} = JsonWebToken.verify(jwt, %{key: Application.get_env(:chat, Chat.Endpoint)[:private_key]})
-      enusername = Base.encode64(claims[:iss])
-      Redis.command(~w(SET #{csrf} #{enusername}))
-      render conn, "index.html", userid: claims[:jti], username: claims[:iss], usersub: claims[:sub], adi: claims[:adi], csrf: csrf
+  def index(conn, %{"xtoken" => json_web_token}) do
+    if json_web_token != String.trim("") do
+      case JsonWebToken.verify(json_web_token, %{key: Application.get_env(:chat, Chat.Endpoint)[:private_key]}) do
+        {:ok, verified_token} ->  
+          Redis.command(~w(SET #{verified_token[:sub]}:name #{verified_token[:iss]}))
+          Redis.command(~w(SET #{verified_token[:sub]}:id #{verified_token[:jti]}))
+          conn
+          |> assign(:username, verified_token[:iss])
+          |> assign(:is_admin, verified_token[:adi])
+          |> render "index.html",  %{channel_token: Phoenix.Token.sign(conn, "user", json_web_token), is_signin: true}
+        {:error, "invalid"} ->
+          conn
+          |> assign(:username, "")
+          |> assign(:is_admin, "")
+          |> render "index.html",  %{channel_token: Phoenix.Token.sign(conn, "user", json_web_token), is_signin: false}
+      end
     else
-      render conn, "index.html", userid: "", username: "", usersub: "", adi: "", csrf: ""
+      conn
+      |> assign(:username, "")
+      |> assign(:is_admin, "")
+      |> render "index.html",  %{channel_token: Phoenix.Token.sign(conn, "user", json_web_token), is_signin: false}
     end
   end
 
