@@ -4,7 +4,7 @@ defmodule Chat.Mixfile do
   def project do
     [app: :chat,
      version: "0.0.4",
-     elixir: "~> 1.3",
+     elixir: "~> 1.2",
      elixirc_paths: ["lib", "web"],
      compilers: [:phoenix] ++ Mix.compilers,
      deps: deps()]
@@ -13,13 +13,13 @@ defmodule Chat.Mixfile do
   def application do
     [mod: {Chat, []},
      applications: [:phoenix, :phoenix_html, :phoenix_pubsub, :cowboy, :logger,
-                   :redix, :ecto, :gettext, :secure_random,
+                   :redix, :phoenix_ecto, :gettext, :secure_random,
                    :json_web_token]]
   end
 
   defp deps do
     [{:phoenix, "~> 1.2"},
-     {:ecto, "~> 2.0.4"},
+     {:phoenix_ecto, "~> 3.0"},
      {:phoenix_html, "~> 2.6.2"},
      {:gettext, "~> 0.9"},
      {:cowboy, "~> 1.0"},

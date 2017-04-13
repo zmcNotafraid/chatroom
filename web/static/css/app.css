@@ -1,49 +1,115 @@
-html {
-  position: relative;
-  min-height: 100%;
+html, body {
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    font-family:PingFangSC-Regular;
+    font-size: 14px;
+    font-weight: lighter;
 }
 
-#messages {
-  margin-top: 0;
-  margin-bottom: 0.5em;
-  padding-left: 0;
-  padding-right: 0;
+main{
+  position: relative;
+  height: 100%;
 }
+
+.top.notice{
+  padding: 10px;
+  border:1px solid rgba(0,124,197,0.08);
+  background-color: rgba(0,124,197,0.02);
+  line-height: 19px;
+  color: #a1643e;
+}
+
+/*iOS safari only*/
+@media screen and (max-device-width: 480px) { 
+  _::-webkit-full-page-media, _:future, :root .history {
+      margin-top: 10px;
+      margin-bottom: 10px;
+      overflow: scroll;
+      height: 50%;
+  }
+
+  _::-webkit-full-page-media, _:future, :root .content {
+    width:90%;
+    font-size: 0.9em;
+  }
+}
+
+.history {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  overflow: scroll;
+  height: 70%;
+}
+
+.message{
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.content{
+  height: 2em;
+  font-size: 1em;
+  line-height: 2em;
+  width: 97%;
+}
+
+.visitor::before{
+  content: url("/images/exclamatory_mark.png");
+  vertical-align:sub;
+}
+
+.visitor{
+  color: #767676;
+}
+
 p{
-  margin: 0 0 6px; 
+  margin:12px 0 0 0;
+}
+
+p.admin > span:first-child:before{
+  content: url("/images/yunbi_logo.png");
+  vertical-align:middle;
+}
+
+p.certified_guest > span:first-child:before{
+  content: url("/images/vip.png");
+  vertical-align:sub;
 }
 
 .name::after
 {
-  content: ":";
+  content: "：";
   color: grey;
-  padding-right:0.8em;
 }
 
 p.admin > span:first-child {
-  color: #5f74c4;
+  color: #007dc5;
   overflow: hidden;
 }
 
 p.admin > span:last-child {
-  color: #5f74c4;
-  font-size: 1.1em;
+  color: #007dc5;
 }
 
 p.normal > span:first-child {
-  color: #767676;
+  color: #444444;
   overflow: hidden;
 }
 
-p.normal_believer > span:nth-child(2), p.advanced_believer > span:nth-child(2), p.true_name > span:nth-child(2), p.normal > span:nth-child(2)  {
+p.beginner > span:nth-child(2), p.helpful_user > span:nth-child(2), p.advanced_user > span:nth-child(2), p.certified_guest > span:nth-child(2), p.normal > span:nth-child(2)  {
   color: #aaa;
   font-size: 0.8em;
   display: none;
 }
 
+.system.notice{
+  text-align: center;
+}
+
 .time {
   padding: 2px 4px;
-  font-size: 90%;
   color: #fff;
   background-color: #ccc;
   border-radius: 4px;
@@ -51,25 +117,28 @@ p.normal_believer > span:nth-child(2), p.advanced_believer > span:nth-child(2), 
 
 .name{
   font-weight: bold; 
-  font-size: 1.1em;
 }
 
-p.normal_believer > span:last-child,
-p.normal > span:last-child, p.advanced_believer > span:last-child,
-p.true_name > span:last-child
+p.beginner > span:last-child,
+p.helpful_user > span:last-child,
+p.normal > span:last-child, p.advanced_user > span:last-child,
+p.certified_guest > span:last-child
 {
-  font-size: 1.1em;
-  color: grey;
+  color: #444444;
 }
 
-p.normal_believer > span:first-child{
-  color: #fa9d96;
+p.beginner > span:first-child{
+  color: #417505;
 }
 
-p.advanced_believer > span:first-child{
-  color: #bf59a9;
+p.helpful_user > span:first-child{
+  color: #a66740;
 }
 
-p.true_name > span:first-child{
-  color: #f98044;
+p.advanced_user > span:first-child{
+  color: #f2731c;
+}
+
+p.certified_guest > span:first-child{
+  color: #fcbd0f;
 }

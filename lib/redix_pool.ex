@@ -1,7 +1,7 @@
 defmodule Chat.RedixPool do
   use Supervisor
 
-  @redis_connection_params host: "localhost"
+  @redis_connection_params host: Application.get_env(:chat, Chat.Endpoint)[:redis_host]
 
   def start_link do
     Supervisor.start_link(__MODULE__, [])

@@ -5,6 +5,7 @@ defmodule Chat.Web do
       use Phoenix.View, root: "web/templates"
       import Chat.Router.Helpers
       use Phoenix.HTML
+      alias Chat.RedixPool, as: Redis
     end
   end
 

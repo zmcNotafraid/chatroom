@@ -5,7 +5,7 @@ defmodule Chat.RoomChannel do
 
   def join("rooms:lobby", message, socket) do
     Process.flag(:trap_exit, true)
-    send(self(), {:after_join, message})
+    send(self(), :after_join)
     {:ok, socket}
   end
 
@@ -18,92 +18,99 @@ defmodule Chat.RoomChannel do
     :ok
   end
 
-  def handle_info({:after_join, _msg}, socket) do
-    {:ok, history} = Redis.command(~w(ZRANGE zset -100 -1))
+  def handle_info(:after_join, socket) do
+    {:ok, history} = Redis.command(~w(ZRANGE history -50 -1))
     push socket, "history:msgs", %{ history: history }
     push socket, "join", %{status: "connected"}
     {:noreply, socket}
   end
 
+  defp set_role(role, user_number) do
+    Redis.command(~w(SET #{user_number}:role #{role}))
+  end
+
+  def handle_in("update:top:notice", msg, socket) do
+    Redis.command(~w(SET chatroom:top:notice #{msg["notice"]} ))
+    push socket, "new:msg", %{name: socket.assigns[:username],is_admin: socket.assigns[:is_admin], action: "update_top_notice"}
+    {:noreply, socket}
+  end
+
+  def handle_in("reset:role", msg, socket) do
+    Redis.command(~w(DEL #{msg["userNumber"]}:role ))
+    push socket, "new:msg", %{name: socket.assigns[:username],is_admin: socket.assigns[:is_admin], action: "reset_role"}
+    {:noreply, socket}
+  end
+
+  def handle_in("auth:beginner", msg, socket) do
+    set_role("beginner", msg["userNumber"])
+    push socket, "new:msg", %{name: socket.assigns[:username],is_admin: socket.assigns[:is_admin], action: "auth_beginner"}
+    {:noreply, socket}
+  end
+
+  def handle_in("auth:helpful_user", msg, socket) do
+    set_role("helpful_user", msg["userNumber"])
+    push socket, "new:msg", %{name: socket.assigns[:username],is_admin: socket.assigns[:is_admin], action: "auth_helpful_user"}
+    {:noreply, socket}
+  end
+
+  def handle_in("auth:advanced_user", msg, socket) do
+    set_role("advanced_user", msg["userNumber"])
+    push socket, "new:msg", %{name: socket.assigns[:username],is_admin: socket.assigns[:is_admin], action: "auth_advanced_user" }
+    {:noreply, socket}
+  end
+
+  def handle_in("auth:certified_guest", msg, socket) do
+    set_role("certified_guest", msg["userNumber"])
+    push socket, "new:msg", %{name: socket.assigns[:username],is_admin: socket.assigns[:is_admin], action: "auth_certified_guest" }
+    {:noreply, socket}
+  end
+
+  def handle_in("ban", msg, socket) do
+    {:ok, ban_name} = Redis.command(~w(GET #{msg["userNumber"]}:name))
+    Redis.command(~w(SET #{msg["userNumber"]}:ban #{msg["reason"]} ))
+    Redis.command(~w(EXPIRE #{msg["userNumber"]}:ban #{String.to_integer(msg["minutes"])*60}))
+    broadcast! socket, "new:msg", %{name: socket.assigns[:username], is_admin: socket.assigns[:is_admin], action: "ban", ban_name: ban_name }
+    {:noreply, socket}
+  end
+
+  def handle_in("view:ban_reason", msg, socket) do
+    {:ok, reason} = Redis.command(~w(GET #{msg["userNumber"]}:ban ))
+    broadcast! socket, "new:msg", %{name: socket.assigns[:username], is_admin: socket.assigns[:is_admin], payload: reason}
+    {:noreply, socket}
+  end
+
+  def handle_in("update:name", msg, socket) do
+    push socket, "new:msg", %{name: "管理员",is_admin: socket.assigns[:is_admin], action: "update_name"}
+    {:noreply, socket}
+  end
+
   def handle_in("new:msg", msg, socket) do
-    [name, sub, adi, body, csrf] = [msg["user"], msg["sub"], msg["adi"], msg["body"], msg["csrf"]]
-    {:ok, role} = Redis.command(~w(get #{sub}:role))
-    if role == nil do
-      role = ""
-    end
-    {:ok, redis_user_name} = Redis.command(~w(GET #{csrf}))
-    if adi == "true" && (String.contains? body, ["X:", "K:", "G:", "V:"]) do
-      [_cmd, blocksub, min] = String.split(body, ":")
-      cond do
-        String.contains? body, "X" ->
-          Redis.command(~w(SET #{blocksub} #{1}))
-          Redis.command(~w(EXPIRE #{blocksub} #{String.to_integer(min)*60}))
-          if String.to_integer(min) == 0 do
-            broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, role: role, body: "用户***##{blocksub} 已被 #{name} 解禁"}
-          else
-            broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, role: role, body: "用户***##{blocksub} 被 #{name} 禁言 #{min} 分钟"}
-          end
-        String.contains? body, "K" ->
-          Redis.command(~w(SET #{blocksub}:role normal_believer))
-          Redis.command(~w(EXPIRE #{blocksub}:role #{String.to_integer(min)*60}))
-          push socket, "new:msg", %{user: name, sub: sub, adi: adi, role: role, body: "用户***##{blocksub} 被 #{name} 设为热心用户"}
-          {:noreply, socket}
-        String.contains? body, "G" ->
-          Redis.command(~w(SET #{blocksub}:role advanced_believer))
-          Redis.command(~w(EXPIRE #{blocksub}:role #{String.to_integer(min)*60}))
-          push socket, "new:msg", %{user: name, sub: sub, adi: adi, role: role, body: "用户***##{blocksub} 被 #{name} 设为高级用户"}
-          {:noreply, socket}
-        String.contains? body, "V" ->
-          Redis.command(~w(SET #{blocksub}:role true_name))
-          Redis.command(~w(EXPIRE #{blocksub}:role #{String.to_integer(min)*60}))
-          push socket, "new:msg", %{user: name, sub: sub, adi: adi, role: role, body: "用户***##{blocksub} 被 #{name} 设为认证嘉宾"}
-          {:noreply, socket}
+    {:ok, role} = Redis.command(~w(get #{socket.assigns[:user_number]}:role))
+    {:ok, ban_time} = Redis.command(~w(TTL #{socket.assigns[:user_number]}:ban ))
+    if ban_time < 0 do
+      if is_tag() do
+        value = "{'name':'SYSTEM','timestamp':#{timestamp()-1}}"
+        Redis.command(~w(ZADD history #{timestamp()-1} #{Base.encode64(value)}))
+        broadcast! socket, "new:msg", %{name: "SYSTEM",timestamp: timestamp()-1}
       end
+      value = "{'name':'#{socket.assigns[:username]}','number':'#{socket.assigns[:user_number]}','role':'#{role}','is_admin':#{socket.assigns[:is_admin]},'payload':'#{msg["payload"]}','timestamp':#{timestamp()}}"
+      Redis.command(~w(ZADD history #{timestamp()} #{Base.encode64(value)}))
+      broadcast! socket, "new:msg", %{name: socket.assigns[:username], number: socket.assigns[:user_number], is_admin: socket.assigns[:is_admin], payload: msg["payload"], role: role, timestamp: timestamp()}
+      {:reply, :ok, socket}   
     else
-      {:ok, blocktime} = Redis.command(~w(TTL #{sub}))
-      {:ok, deusername} = Base.decode64(redis_user_name)
-      if deusername == name and blocktime < 0 do
-        if name == "Member" || name == "用户" do
-          push socket, "new:msg", %{user: name, sub: sub, adi: adi, body: "请修改昵称后再发言", role: role}
-          {:error, %{reason: "init nickname"}}
-        else
-          if is_tag() do
-            broadcast! socket, "new:msg", %{user: "SYSTEM",sub: "", adi: "", body: timestamp(), role: role}
-            value = "#{timestamp()}~SYSTEM~sub~adi~#{timestamp()}~#{role}"
-            Redis.command(~w(ZADD zset #{timestamp()} #{Base.encode64(value)}))
-          end
-          broadcast! socket, "new:msg", %{user: name, sub: sub, adi: adi, body: body, role: role}
-          value = "#{timestamp()}~#{name}~#{sub}~#{adi}~#{body}~#{role}"
-          Redis.command(~w(ZADD zset #{timestamp()} #{Base.encode64(value)}))
-        end
-      else
-        Logger.debug "-- cache #{deusername} block #{name}##{sub} #{blocktime} sec"
-        push socket, "new:msg", %{user: name, sub: sub, adi: adi, body: "您在#{blocktime}秒后才可以发言", role: role}
-        {:error, %{reason: "unauthorized"}}
-      end
+      push socket, "new:msg", %{name: "管理员", is_admin: "true", payload: "您在#{Float.round(ban_time/3600, 1)}小时后才可以发言"}
+      {:stop, %{reason: "have been ban"}, :ok, socket}
     end
-    {:reply, {:ok, %{msg: body}}, assign(socket, :user, name)}
   end
 
   #show timestamp
   def is_tag do
-    case Redis.command(~w(ZRANGE zset -2 -1)) do
+    case Redis.command(~w(ZRANGE history -2 -1 WITHSCORES)) do
       {:ok, []} -> false
-      {:ok, [_last]} -> false
-      {:ok, [first, last]} ->
-        {:ok, defirst} = Base.decode64(first)
-        {:ok, delast} = Base.decode64(last)
-        ftime = String.split(defirst, "~")
-        ltime = String.split(delast, "~")
-        [first_time] = Enum.take(ftime, 1)
-        [last_time] = Enum.take(ltime, 1)
-        String.to_integer(last_time) - String.to_integer(first_time) > 120
+      {:ok, [_last_score, _last_member]} -> false
+      {:ok, [_last_but_one_member, last_but_one_score, _last_member, last_score]} ->
+        String.to_integer(last_score) - String.to_integer(last_but_one_score) > 120   
     end
-  end
-
-  def datetime do
-    {:ok, dt} = DateTime.from_unix(timestamp())
-    DateTime.to_iso8601(dt)
   end
 
   def timestamp do
