@@ -23,23 +23,23 @@ main{
 /*iOS safari only*/
 @media screen and (max-device-width: 480px) { 
   _::-webkit-full-page-media, _:future, :root .history {
-      margin-top: 10px;
-      margin-bottom: 10px;
-      overflow: scroll;
-      height: 50%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    overflow: scroll;
+    height: 75%;
   }
-
   _::-webkit-full-page-media, _:future, :root .content {
-    width:90%;
+    width:96%;
     font-size: 0.9em;
   }
 }
 
+
 .history {
   margin-top: 10px;
   margin-bottom: 10px;
-  overflow: scroll;
-  height: 70%;
+  overflow-y: scroll;
+  height: 75%;
 }
 
 .message{
@@ -52,7 +52,7 @@ main{
   height: 2em;
   font-size: 1em;
   line-height: 2em;
-  width: 97%;
+  width: 98%;
 }
 
 .visitor::before{
