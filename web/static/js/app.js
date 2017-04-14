@@ -85,7 +85,6 @@ class App {
       for (var i = 0; msgs.history.length > i; i++) {
         var tempHistory = decodeURIComponent(escape(window.atob( msgs.history[i] ))).replace(/\'/g, "\"");
         var history = JSON.parse(tempHistory);
-        console.info(history);
         var msg = {name : history.name,
           number : history.number, 
           is_admin : history.is_admin,
@@ -125,7 +124,9 @@ class App {
 
       }
       $history.append(this.messageTemplate(msg))
-      $history[0].scrollTop = $history[0].scrollHeight;
+      if ($history[0].scrollTop + 60 > ($history[0].scrollHeight - $history[0].clientHeight)){
+        $history[0].scrollTop = $history[0].scrollHeight;
+      }
     })
 
     $(document).on('dblclick','.name',function(){
