@@ -23,7 +23,7 @@ defmodule Chat.Mixfile do
      {:phoenix_html, "~> 2.6.2"},
      {:gettext, "~> 0.9"},
      {:cowboy, "~> 1.0"},
-     {:redix, "~> 0.4.0"},
+     {:redix, "~> 0.6.0"},
      {:secure_random, "~> 0.5"},
      {:json_web_token, "~> 0.2.6"},
      {:distillery, "~> 1.0"}]

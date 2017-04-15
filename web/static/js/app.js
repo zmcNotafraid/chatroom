@@ -33,7 +33,6 @@ class App {
               $input.val("");
               return
             }
-
             if ($input.val().indexOf("R:") == 0){
               channel.push("reset:role", {userNumber: contentArray[1]})
               $input.val("");
@@ -64,6 +63,11 @@ class App {
               $input.val("");
               return
             }
+            if ($input.val().indexOf("J:") == 0){
+              channel.push("remove:ban", {userNumber: contentArray[1]})
+              $input.val("");
+              return
+            }
             if ($input.val().indexOf("VX:") == 0){  
               channel.push("view:ban_reason", {userNumber: contentArray[1] })
               $input.val("");
@@ -75,7 +79,7 @@ class App {
             $input.val("");
             return
           }
-          channel.push("new:msg", {payload: $input.val()})
+          channel.push("new:msg", {body: $input.val()})
           $input.val("");
         }
       }
@@ -85,10 +89,11 @@ class App {
       for (var i = 0; msgs.history.length > i; i++) {
         var tempHistory = decodeURIComponent(escape(window.atob( msgs.history[i] ))).replace(/\'/g, "\"");
         var history = JSON.parse(tempHistory);
+        console.info(history);
         var msg = {name : history.name,
           number : history.number, 
           is_admin : history.is_admin,
-          payload : history.payload,
+          body : history.payload || history.body,
           role: history.role,
           timestamp: history.timestamp
         }
@@ -101,25 +106,31 @@ class App {
       switch(msg.action)
       {
         case  "reset_role":
-          msg.payload = "用户已被取消角色"
+          msg.body = "用户已被取消角色"
           break;
         case  "auth_beginner":
-          msg.payload = "用户已被设为小韭菜"
+          msg.body = "用户已被设为小韭菜"
           break;
         case  "auth_helpful_user":
-          msg.payload = "用户已被设为热心用户"
+          msg.body = "用户已被设为热心用户"
           break;
         case  "auth_advanced_user":
-          msg.payload = "用户已被设为高级用户"
+          msg.body = "用户已被设为高级用户"
           break;
         case  "auth_certified_guest":
-          msg.payload = "用户已被设为认证嘉宾"
+          msg.body = "用户已被设为认证嘉宾"
           break;
         case  "ban":
-          msg.payload = "用户「"+msg.ban_name+"」已被管理员禁言"
+          msg.body = "用户「"+msg.ban_name+"」已被管理员禁言"
           break;
         case  "update_top_notice":
-          msg.payload = "聊天室置顶公告设置成功,刷新查看"
+          msg.body = "聊天室置顶公告设置成功,刷新查看"
+          break;
+        case  "update_name":
+          msg.body = "请修改昵称后再发言"
+          break;
+        case  "remove_ban":
+          msg.body = "用户「"+msg.ban_name+"」已被解禁"
           break;
 
       }
@@ -146,7 +157,7 @@ class App {
     let name = this.sanitize(msg.name || "anonymous")
     let number  = this.sanitize(msg.number)
     let is_admin      = this.sanitize(msg.is_admin || "false")
-    let payload    = this.sanitize(msg.payload)
+    let body    = this.sanitize(msg.payload || msg.body)
     let role      = this.sanitize(msg.role)
     let timestamp      = this.sanitize(msg.timestamp)
 
@@ -154,11 +165,11 @@ class App {
       return(`<p class="system notice"><span class="time">${moment(timestamp * 1000).fromNow()}</span></p>`)
     }
     if (is_admin == "true") {
-      return(`<p class="admin"><span class="name">${name}</span><span>${payload}</span></p>`)
+      return(`<p class="admin"><span class="name">${name}</span><span>${body}</span></p>`)
     } else if (role != "" && role != "null") {
-      return(`<p class="${role}"><span class="name">${name}</span><span>${number}</span><span>${payload}</span></p>`)
+      return(`<p class="${role}"><span class="name">${name}</span><span>${number}</span><span>${body}</span></p>`)
     } else{
-      return(`<p class="normal"><span class="name">${name}</span><span>${number}</span><span>${payload}</span></p>`)
+      return(`<p class="normal"><span class="name">${name}</span><span>${number}</span><span>${body}</span></p>`)
     }
   }
 }

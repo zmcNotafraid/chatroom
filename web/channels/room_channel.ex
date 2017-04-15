@@ -30,7 +30,7 @@ defmodule Chat.RoomChannel do
   end
 
   def handle_in("update:top:notice", msg, socket) do
-    Redis.command(~w(SET chatroom:top:notice #{msg["notice"]} ))
+    Redis.command(["SET","chatroom:top:notice","#{msg["notice"]}"])
     push socket, "new:msg", %{name: socket.assigns[:username],is_admin: socket.assigns[:is_admin], action: "update_top_notice"}
     {:noreply, socket}
   end
@@ -73,14 +73,21 @@ defmodule Chat.RoomChannel do
     {:noreply, socket}
   end
 
+  def handle_in("remove:ban", msg, socket) do
+    {:ok, ban_name} = Redis.command(~w(GET #{msg["userNumber"]}:name))
+    Redis.command(~w(EXPIRE #{msg["userNumber"]}:ban 0))
+    push socket, "new:msg", %{name: socket.assigns[:username], is_admin: socket.assigns[:is_admin], action: "remove_ban", ban_name: ban_name }
+    {:noreply, socket}
+  end
+
   def handle_in("view:ban_reason", msg, socket) do
     {:ok, reason} = Redis.command(~w(GET #{msg["userNumber"]}:ban ))
-    broadcast! socket, "new:msg", %{name: socket.assigns[:username], is_admin: socket.assigns[:is_admin], payload: reason}
+    broadcast! socket, "new:msg", %{name: socket.assigns[:username], is_admin: socket.assigns[:is_admin], body: reason}
     {:noreply, socket}
   end
 
   def handle_in("update:name", msg, socket) do
-    push socket, "new:msg", %{name: "管理员",is_admin: socket.assigns[:is_admin], action: "update_name"}
+    push socket, "new:msg", %{name: "管理员",is_admin: "true", action: "update_name"}
     {:noreply, socket}
   end
 
@@ -93,12 +100,12 @@ defmodule Chat.RoomChannel do
         Redis.command(~w(ZADD history #{timestamp()-1} #{Base.encode64(value)}))
         broadcast! socket, "new:msg", %{name: "SYSTEM",timestamp: timestamp()-1}
       end
-      value = "{'name':'#{socket.assigns[:username]}','number':'#{socket.assigns[:user_number]}','role':'#{role}','is_admin':#{socket.assigns[:is_admin]},'payload':'#{msg["payload"]}','timestamp':#{timestamp()}}"
+      value = "{'name':'#{socket.assigns[:username]}','number':'#{socket.assigns[:user_number]}','role':'#{role}','is_admin':#{socket.assigns[:is_admin]},'body':'#{msg["body"]}','timestamp':#{timestamp()}}"
       Redis.command(~w(ZADD history #{timestamp()} #{Base.encode64(value)}))
-      broadcast! socket, "new:msg", %{name: socket.assigns[:username], number: socket.assigns[:user_number], is_admin: socket.assigns[:is_admin], payload: msg["payload"], role: role, timestamp: timestamp()}
+      broadcast! socket, "new:msg", %{name: socket.assigns[:username], number: socket.assigns[:user_number], is_admin: socket.assigns[:is_admin], body: msg["body"], role: role, timestamp: timestamp()}
       {:reply, :ok, socket}   
     else
-      push socket, "new:msg", %{name: "管理员", is_admin: "true", payload: "您在#{Float.round(ban_time/3600, 1)}小时后才可以发言"}
+      push socket, "new:msg", %{name: "管理员", is_admin: "true", body: "您在#{Float.round(ban_time/3600, 1)}小时后才可以发言"}
       {:stop, %{reason: "have been ban"}, :ok, socket}
     end
   end
