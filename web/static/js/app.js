@@ -89,7 +89,6 @@ class App {
       for (var i = 0; msgs.history.length > i; i++) {
         var tempHistory = decodeURIComponent(escape(window.atob( msgs.history[i] ))).replace(/\'/g, "\"");
         var history = JSON.parse(tempHistory);
-        console.info(history);
         var msg = {name : history.name,
           number : history.number, 
           is_admin : history.is_admin,
