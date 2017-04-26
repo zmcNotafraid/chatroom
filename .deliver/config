@@ -1,0 +1,25 @@
+APP="chatroom"
+
+BUILD_HOST="192.168.0.2"
+BUILD_USER="root"
+BUILD_AT="/tmp/chatroom/builds"
+
+STAGING_HOSTS="" # staging / test hosts separated by space
+STAGING_USER="" # local user at staging hosts
+TEST_AT="" # deploy directory on staging hosts. default is DELIVER_TO
+
+PRODUCTION_HOSTS="192.168.0.2" 
+PRODUCTION_USER="root"
+DELIVER_TO="/opt/chatroom/releases"       
+AUTO_VERSION=git-branch+git-revision
+
+# For *Phoenix* projects, symlink prod.secret.exs to our tmp source
+pre_erlang_get_and_update_deps() {
+  local _prod_secret_path="/tmp/chatroom/public/prod.secret.exs"
+
+  if [ "$TARGET_MIX_ENV" = "prod" ]; then
+    __sync_remote "
+      ln -sfn '$_prod_secret_path' '$BUILD_AT/config/prod.secret.exs'
+    "
+  fi
+}
