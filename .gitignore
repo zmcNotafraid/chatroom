@@ -2,7 +2,8 @@
 /_build
 /deps
 /*.ez
-/rel
+/rel/chat
+/rel/plugins
 /config/dev.exs
 /config/prod.secret.exs
 # Generate on crash by the VM
@@ -18,3 +19,4 @@ erl_crash.dump
 # /priv/static/css
 # /priv/static/js
 .DS_Store
+.deliver/releases/

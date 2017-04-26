@@ -1,0 +1,49 @@
+APP="chat"
+
+BUILD_HOST="192.168.0.2"
+BUILD_USER="root"
+BUILD_AT="/tmp/chat/builds"
+
+STAGING_HOSTS="192.168.0.2" # staging / test hosts separated by space
+STAGING_USER="root" # local user at staging hosts
+TEST_AT="" # deploy directory on staging hosts. default is DELIVER_TO
+
+PRODUCTION_HOSTS="192.168.0.2" 
+PRODUCTION_USER="root"
+DELIVER_TO="/opt/chat/releases"       
+
+pre_erlang_clean_compile() {
+  status "Preparing assets with: brunch build and phoenix.digest"
+  __sync_remote "
+    # fail if any command fails (recommended)
+    set -e
+
+    # enter the build directory on the build host (required)
+    cd '$BUILD_AT'
+
+    mkdir -p priv/static # required by the phoenix.digest task
+
+    # installing npm dependencies
+    npm install
+
+    # building brunch
+    ./node_modules/brunch/bin/brunch b -p
+
+    # compress and tag your assets
+    MIX_ENV=prod mix phoenix.digest
+  "
+}
+
+# For *Phoenix* projects, symlink prod.secret.exs to our tmp source
+pre_erlang_get_and_update_deps() {
+  local _prod_secret_path="/tmp/chat/public/prod.secret.exs"
+  local _dev_path="/tmp/chat/public/dev.exs"
+
+  if [ "$TARGET_MIX_ENV" = "prod" ]; then
+    __sync_remote "
+      ln -sfn '$_prod_secret_path' '$BUILD_AT/config/prod.secret.exs'
+      ln -sfn '$_dev_path' '$BUILD_AT/config/dev.exs'
+    "
+  fi
+}
+ 

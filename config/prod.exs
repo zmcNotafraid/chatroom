@@ -1,7 +1,7 @@
 use Mix.Config
 
 config :chat, Chat.Endpoint,
-  http: [port: System.get_env("PORT")],
+  http: [port: 4001],
   root: ".",
   cache_static_manifest: "priv/static/manifest.json",
   server: true,
