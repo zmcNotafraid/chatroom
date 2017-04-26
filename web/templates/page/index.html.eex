@@ -2,11 +2,10 @@
 <div class="history"></div>
 <div class="message">
   <%= if @is_signin do %>
-    <input class="content" placeholder="回车发送聊天内容 / 点聊天室图标有惊喜！"  />
-    <input type="hidden" id="channel_token" value="<%= @channel_token %>">
+    <input class="content" placeholder="回车发送聊天内容，点击聊天室图标有惊喜！"  />
   <% else %>
     <div class="visitor">
-      请确保您已登录和通过KYC，并且账户总资产大于100元
+      使用聊天功能需经过身份验证且账户有交易记录。    
     </div>
   <% end %>
 </div>

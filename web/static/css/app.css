@@ -1,10 +1,9 @@
 html, body {
-    height: 100%;
-    margin: 0px;
-    padding: 0px;
-    font-family:PingFangSC-Regular;
-    font-size: 14px;
-    font-weight: lighter;
+  height: 100%;
+  margin: 0;
+  font-family:PingFangSC-Regular;
+  font-size: 14px;
+  font-weight: lighter;
 }
 
 main{
@@ -13,33 +12,45 @@ main{
 }
 
 .top.notice{
-  padding: 10px;
-  border:1px solid rgba(0,124,197,0.08);
-  background-color: rgba(0,124,197,0.02);
-  line-height: 19px;
-  color: #a1643e;
+  padding: 1em;
+  border:1px solid #D1B9A1;
+  background-color: #FEFAEA;
+  line-height: 1.5em;
+  color: #8B572A;
 }
 
 /*iOS safari only*/
-@media screen and (max-device-width: 480px) { 
+@media screen and (max-device-width: 320px) { 
   _::-webkit-full-page-media, _:future, :root .history {
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 1em;
     overflow: scroll;
-    height: 75%;
+    height: 62%;
   }
   _::-webkit-full-page-media, _:future, :root .content {
-    width:96%;
+    height: 2em;
+    width:92%;
+    padding-left:1em;
+    font-size: 0.9em;
+  }
+}
+@media screen and (min-device-width: 414px) and (max-device-width : 736px) { 
+  _::-webkit-full-page-media, _:future, :root .history {
+    margin-top: 1em;
+    overflow: scroll;
+    height: 65%;
+  }
+  _::-webkit-full-page-media, _:future, :root .content {
+    height: 2em;
+    width:94%;
+    padding-left:1em;
     font-size: 0.9em;
   }
 }
 
-
 .history {
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 1em;
   overflow-y: scroll;
-  height: 75%;
+  height: 70%;
 }
 
 .message{
@@ -49,10 +60,19 @@ main{
 }
 
 .content{
-  height: 2em;
+  height: 2.5em;
   font-size: 1em;
   line-height: 2em;
-  width: 98%;
+  width: 96%;
+  padding-left:1em;
+}
+
+input:focus, input:active, input.active, input:focus:active {
+  background-image: none;
+  outline: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  border: 1px solid #85b7d9;
 }
 
 .visitor::before{
@@ -65,7 +85,7 @@ main{
 }
 
 p{
-  margin:12px 0 0 0;
+  margin:8px 0 0 0;
 }
 
 p.admin > span:first-child:before{
@@ -106,12 +126,13 @@ p.beginner > span:nth-child(2), p.helpful_user > span:nth-child(2), p.advanced_u
 
 .system.notice{
   text-align: center;
+  font-size: .9em;
 }
 
 .time {
   padding: 2px 4px;
   color: #fff;
-  background-color: #ccc;
+  background-color: #e8e8e8;
   border-radius: 4px;
 }
 
@@ -141,4 +162,24 @@ p.advanced_user > span:first-child{
 
 p.certified_guest > span:first-child{
   color: #fcbd0f;
+}
+
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: #D3D3D3;
+  font-size: 0.9em;
+}
+
+::-moz-placeholder { /* Firefox 19+ */
+  color: #B9BDC1;
+  font-size: 0.9em;
+}
+
+:-ms-input-placeholder { /* IE 10+ */
+  color: #B9BDC1;
+  font-size: 0.9em;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+  color: #B9BDC1;
+  font-size: 0.9em;
 }

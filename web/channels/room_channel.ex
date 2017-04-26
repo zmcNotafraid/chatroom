@@ -19,7 +19,7 @@ defmodule Chat.RoomChannel do
   end
 
   def handle_info(:after_join, socket) do
-    {:ok, history} = Redis.command(~w(ZRANGE history -20 -1))
+    {:ok, history} = Redis.command(~w(ZRANGE history -30 -1))
     push socket, "history:msgs", %{ history: history }
     push socket, "join", %{status: "connected"}
     {:noreply, socket}
