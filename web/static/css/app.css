@@ -19,8 +19,10 @@ main{
   color: #8B572A;
 }
 
-/*iOS safari only*/
-@media screen and (max-device-width: 320px) { 
+/*iphone5 and iphone 5s*/
+@media only screen 
+  and (min-device-width: 320px) 
+  and (max-device-width: 568px) { 
   _::-webkit-full-page-media, _:future, :root .history {
     margin-top: 1em;
     overflow: scroll;
@@ -33,7 +35,26 @@ main{
     font-size: 0.9em;
   }
 }
-@media screen and (min-device-width: 414px) and (max-device-width : 736px) { 
+
+/*iphone6*/
+@media only screen 
+  and (min-device-width: 375px) 
+  and (max-device-width: 667px) { 
+    _::-webkit-full-page-media, _:future, :root .history {
+      margin-top: 1em;
+      overflow: scroll;
+      height: 65%;
+    }
+    _::-webkit-full-page-media, _:future, :root .content {
+      height: 1.5em;
+      width:92%;
+      padding-left:1em;
+      font-size: 0.9em;
+    }
+}
+
+/*iphone6 plus*/
+@media only screen and (min-device-width: 414px) and (max-device-width : 736px) { 
   _::-webkit-full-page-media, _:future, :root .history {
     margin-top: 1em;
     overflow: scroll;
@@ -85,7 +106,7 @@ input:focus, input:active, input.active, input:focus:active {
 }
 
 p{
-  margin:8px 0 0 0;
+  margin:1em 0 0 0;
 }
 
 p.admin > span:first-child:before{
@@ -114,7 +135,7 @@ p.admin > span:last-child {
 }
 
 p.normal > span:first-child {
-  color: #444444;
+  color: #5B646F;
   overflow: hidden;
 }
 
@@ -145,7 +166,7 @@ p.helpful_user > span:last-child,
 p.normal > span:last-child, p.advanced_user > span:last-child,
 p.certified_guest > span:last-child
 {
-  color: #444444;
+  color: #5B646F;
 }
 
 p.beginner > span:first-child{
