@@ -16,7 +16,7 @@ defmodule Chat.UserSocket do
           case JsonWebToken.verify(json_web_token, %{key: Application.get_env(:chat, Chat.Endpoint)[:private_key]}) do
             {:ok, verified_token} ->
               {:ok, 
-                assign(socket, :user_number, verified_token[:sub]) |>
+                assign(socket, :user_number, verified_token[:jti]) |>
                 assign(:username, verified_token[:iss]) |>
                 assign(:is_admin, verified_token[:adi])
               }

@@ -166,9 +166,17 @@ class App {
     if (is_admin == "true") {
       return(`<p class="admin"><span class="name">${name}</span><span>${body}</span></p>`)
     } else if (role != "" && role != "null") {
-      return(`<p class="${role}"><span class="name">${name}</span><span>${number}</span><span>${body}</span></p>`)
+      if (isAdmin == "true"){
+        return(`<p class="${role}"><span class="name">${name}</span><span>${number}</span><span>${body}</span></p>`)
+      }else{
+        return(`<p class="${role}"><span class="name">${name}</span><span></span><span>${body}</span></p>`)
+      }
     } else{
-      return(`<p class="normal"><span class="name">${name}</span><span>${number}</span><span>${body}</span></p>`)
+      if (isAdmin == "true"){
+        return(`<p class="normal"><span class="name">${name}</span><span>${number}</span><span>${body}</span></p>`)
+      }else{
+        return(`<p class="normal"><span class="name">${name}</span><span></span><span>${body}</span></p>`)
+      }
     }
   }
 }
