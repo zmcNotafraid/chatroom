@@ -6,7 +6,7 @@ defmodule Chat.PageController do
     if json_web_token != String.trim("") do
       case JsonWebToken.verify(json_web_token, %{key: Application.get_env(:chat, Chat.Endpoint)[:private_key]}) do
         {:ok, verified_token} ->  
-          Redis.command(~w(SET #{verified_token[:sub]}:name #{verified_token[:iss]}))
+          Redis.command(~w(SET #{verified_token[:jti]}:name #{verified_token[:iss]}))
           conn
           |> assign(:username, verified_token[:iss])
           |> assign(:is_admin, verified_token[:adi])
