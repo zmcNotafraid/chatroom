@@ -1,0 +1,31 @@
+## `msgid`s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove `msgid`s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use `mix gettext.extract --merge` or `mix gettext.merge`
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: en\n"
+
+#: web/templates/page/index.html.eex:8
+msgid "You need to pass the KYC and deposit at least once If you want to chat"
+msgstr ""
+
+#: web/channels/room_channel.ex:102
+msgid "Your nickname includes sensitive words, please change your nickname before making a statement."
+msgstr ""
+
+#: web/channels/room_channel.ex:117
+msgid "You can make a statement after %{hour} hours!"
+msgstr ""
+
+#: web/channels/room_channel.ex:102 web/channels/room_channel.ex:117
+msgid "admin"
+msgstr ""
+
+#: web/channels/room_channel.ex:101
+msgid "member"
+msgstr ""

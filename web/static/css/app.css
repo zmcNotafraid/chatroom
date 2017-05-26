@@ -125,26 +125,6 @@ p.certified_guest > span:first-child:before{
   color: grey;
 }
 
-p.admin > span:first-child {
-  color: #007dc5;
-  overflow: hidden;
-}
-
-p.admin > span:last-child {
-  color: #007dc5;
-}
-
-p.normal > span:first-child {
-  color: #5B646F;
-  overflow: hidden;
-}
-
-p.beginner > span:nth-child(2), p.helpful_user > span:nth-child(2), p.advanced_user > span:nth-child(2), p.certified_guest > span:nth-child(2), p.normal > span:nth-child(2)  {
-  color: #aaa;
-  font-size: 0.8em;
-  display: none;
-}
-
 .system.notice{
   text-align: center;
   font-size: .9em;
@@ -161,24 +141,60 @@ p.beginner > span:nth-child(2), p.helpful_user > span:nth-child(2), p.advanced_u
   font-weight: bold; 
 }
 
-p.beginner > span:last-child,
-p.helpful_user > span:last-child,
-p.normal > span:last-child, p.advanced_user > span:last-child,
-p.certified_guest > span:last-child
-{
+p.admin > span:first-child {
+  color: #007dc5;
+  overflow: hidden;
+}
+
+p.admin > span:last-child {
+  color: #007dc5;
+}
+
+p.normal > span:nth-child(2), 
+p.beginner > span:nth-child(2), 
+p.helpful_user > span:nth-child(2),
+p.two_hundred_thousand > span:nth-child(2), 
+p.five_hundred_thousand > span:nth-child(2), 
+p.one_million > span:nth-child(2),
+p.certified_guest > span:nth-child(2) {
+  color: #aaa;
+  font-size: 0.8em;
+  display: none;
+}
+
+p.normal > span:nth-child(3), 
+p.beginner > span:nth-child(3), 
+p.helpful_user > span:nth-child(3),
+p.two_hundred_thousand > span:nth-child(3), 
+p.five_hundred_thousand > span:nth-child(3), 
+p.one_million > span:nth-child(3),
+p.certified_guest > span:nth-child(3) {
   color: #5B646F;
 }
 
+p.normal > span:first-child {
+  color: #5B646F;
+  overflow: hidden;
+}
+
 p.beginner > span:first-child{
-  color: #417505;
+  color: #476129;
 }
 
 p.helpful_user > span:first-child{
-  color: #a66740;
+  color: #734259;
 }
 
-p.advanced_user > span:first-child{
-  color: #f2731c;
+p.two_hundred_thousand > span:first-child{
+  color: #98415e;
+}
+
+p.five_hundred_thousand > span:first-child{
+  color: #c44871;
+}
+
+p.one_million > span:first-child{
+  color: #f8759a;
 }
 
 p.certified_guest > span:first-child{

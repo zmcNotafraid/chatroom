@@ -6,6 +6,7 @@ defmodule Chat.Web do
       import Chat.Router.Helpers
       use Phoenix.HTML
       alias Chat.RedixPool, as: Redis
+      import Chat.Gettext
     end
   end
 
@@ -22,6 +23,7 @@ defmodule Chat.Web do
       use Phoenix.Channel
       alias Chat.Repo
       alias Chat.RedixPool, as: Redis
+      import Chat.Gettext
     end
   end
 

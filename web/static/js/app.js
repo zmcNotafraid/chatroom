@@ -74,11 +74,6 @@ class App {
               return
             }
           }
-          if (username == "用户" || username == "Member"){
-            channel.push("update:name", {template: "请修改昵称后再发言" })
-            $input.val("");
-            return
-          }
           channel.push("new:msg", {body: $input.val()})
           $input.val("");
         }
@@ -124,9 +119,6 @@ class App {
           break;
         case  "update_top_notice":
           msg.body = "聊天室置顶公告设置成功,刷新查看"
-          break;
-        case  "update_name":
-          msg.body = "请修改昵称后再发言"
           break;
         case  "remove_ban":
           msg.body = "用户「"+msg.ban_name+"」已被解禁"

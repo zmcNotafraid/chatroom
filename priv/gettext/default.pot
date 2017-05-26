@@ -1,0 +1,31 @@
+## This file is a PO Template file.
+##
+## `msgid`s here are often extracted from source code.
+## Add new translations manually only if they're dynamic
+## translations that can't be statically extracted.
+##
+## Run `mix gettext.extract` to bring this file up to
+## date. Leave `msgstr`s empty as changing them here as no
+## effect: edit them in PO (`.po`) files instead.
+msgid ""
+msgstr ""
+
+#: web/templates/page/index.html.eex:8
+msgid "You need to pass the KYC and deposit at least once If you want to chat"
+msgstr ""
+
+#: web/channels/room_channel.ex:102
+msgid "Your nickname includes sensitive words, please change your nickname before making a statement."
+msgstr ""
+
+#: web/channels/room_channel.ex:117
+msgid "You can make a statement after %{hour} hours!"
+msgstr ""
+
+#: web/channels/room_channel.ex:102 web/channels/room_channel.ex:117
+msgid "admin"
+msgstr ""
+
+#: web/channels/room_channel.ex:101
+msgid "member"
+msgstr ""

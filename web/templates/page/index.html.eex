@@ -5,7 +5,7 @@
     <input class="content" placeholder="回车发送聊天内容，点击聊天室图标有惊喜！"  />
   <% else %>
     <div class="visitor">
-      使用聊天功能需经过身份验证且账户有交易记录。    
+      <%= gettext "You need to pass the KYC and deposit at least once If you want to chat" %>
     </div>
   <% end %>
 </div>

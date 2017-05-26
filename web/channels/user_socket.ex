@@ -18,7 +18,8 @@ defmodule Chat.UserSocket do
               {:ok, 
                 assign(socket, :user_number, verified_token[:jti]) |>
                 assign(:username, verified_token[:iss]) |>
-                assign(:is_admin, verified_token[:adi])
+                assign(:is_admin, verified_token[:adi])|>
+                assign(:role, verified_token[:sub])
               }
             {:error, "invalid"} ->
               {:ok, socket}

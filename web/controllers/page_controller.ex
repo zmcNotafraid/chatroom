@@ -10,18 +10,18 @@ defmodule Chat.PageController do
           conn
           |> assign(:username, verified_token[:iss])
           |> assign(:is_admin, verified_token[:adi])
-          |> render "index.html",  %{channel_token: Phoenix.Token.sign(conn, "user", json_web_token), is_signin: true}
+          |> render("index.html",  %{channel_token: Phoenix.Token.sign(conn, "user", json_web_token), is_signin: true})
         {:error, "invalid"} ->
           conn
           |> assign(:username, "")
           |> assign(:is_admin, "")
-          |> render "index.html",  %{channel_token: Phoenix.Token.sign(conn, "user", json_web_token), is_signin: false}
+          |> render("index.html",  %{channel_token: Phoenix.Token.sign(conn, "user", json_web_token), is_signin: false})
       end
     else
       conn
       |> assign(:username, "")
       |> assign(:is_admin, "")
-      |> render "index.html",  %{channel_token: Phoenix.Token.sign(conn, "user", json_web_token), is_signin: false}
+      |> render("index.html",  %{channel_token: Phoenix.Token.sign(conn, "user", json_web_token), is_signin: false})
     end
   end
 
