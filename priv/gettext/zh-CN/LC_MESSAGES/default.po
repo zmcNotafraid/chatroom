@@ -14,18 +14,19 @@ msgstr ""
 msgid "You need to pass the KYC and deposit at least once If you want to chat"
 msgstr " 使用聊天功能需经过身份验证且账户有交易记录。"
 
-#: web/channels/room_channel.ex:102
-msgid "Your nickname includes sensitive words, please change your nickname before making a statement."
-msgstr "你的昵称包含敏感词汇，请修改昵称后再发言"
-
-#: web/channels/room_channel.ex:117
+#: web/channels/room_channel.ex:116
 msgid "You can make a statement after %{hour} hours!"
 msgstr "你可以在%{hour}小时后发言"
 
-#: web/channels/room_channel.ex:102 web/channels/room_channel.ex:117
+#: web/channels/room_channel.ex:94 web/channels/room_channel.ex:100
+#: web/channels/room_channel.ex:116
 msgid "admin"
 msgstr "管理员"
 
-#: web/channels/room_channel.ex:101
-msgid "member"
-msgstr "用户"
+#: web/channels/room_channel.ex:100
+msgid "Repeated statements are forbidden."
+msgstr "禁止重复发言"
+
+#: web/channels/room_channel.ex:94
+msgid "Your nickname includes sensitive words, please visit accounts page to change your nickname before making a statement."
+msgstr "你的昵称包含敏感词汇，请前往我的账户页面修改昵称后再发言"

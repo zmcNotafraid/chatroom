@@ -25,10 +25,6 @@ defmodule Chat.RoomChannel do
     {:noreply, socket}
   end
 
-  defp set_role(role, user_number) do
-    Redis.command(~w(SET #{user_number}:role #{role}))
-  end
-
   def handle_in("update:top:notice", msg, socket) do
     Redis.command(["SET","chatroom:top:notice","#{msg["notice"]}"])
     push socket, "new:msg", %{name: socket.assigns[:username],is_admin: socket.assigns[:is_admin], action: "update_top_notice"}
@@ -86,37 +82,39 @@ defmodule Chat.RoomChannel do
     {:noreply, socket}
   end
 
-  def handle_in("update:name", _msg, socket) do
-    push socket, "new:msg", %{name: "管理员",is_admin: "true", action: "update_name"}
-    {:noreply, socket}
-  end
-
   def handle_in("new:msg", msg, socket) do
     role = case Redis.command(~w(get #{socket.assigns[:user_number]}:role)) do
       {:ok, nil} -> socket.assigns[:role]
       {:ok, role} -> role
     end
     {:ok, ban_time} = Redis.command(~w(TTL #{socket.assigns[:user_number]}:ban ))
-    {:ok, bad_words} = Redis.command(~w(SMEMBERS bad:words))
-    if contain_bad_words(bad_words, socket.assigns[:username]) || socket.assigns[:username] == gettext("member") do
-      push socket, "new:msg", %{name: gettext("admin"), is_admin: "true", body: gettext("Your nickname includes sensitive words, please change your nickname before making a statement.")}
-      {:stop, %{reason: "nickname validate"}, :ok, socket}
-    else
-      if ban_time < 0 do
-        if is_tag() do
-          value = "{'name':'SYSTEM','timestamp':#{timestamp()-1}}"
-          Redis.command(~w(ZADD history #{timestamp()-1} #{Base.encode64(value)}))
-          broadcast! socket, "new:msg", %{name: "SYSTEM",timestamp: timestamp()-1}
-        end
-        clean_content = replace_bad_words(bad_words, msg["body"])
-        value = "{'name':'#{socket.assigns[:username]}','number':'#{socket.assigns[:user_number]}','role':'#{role}','is_admin':#{socket.assigns[:is_admin]},'body':'#{clean_content}','timestamp':#{timestamp()}}"
-        Redis.command(~w(ZADD history #{timestamp()} #{Base.encode64(value)}))
-        broadcast! socket, "new:msg", %{name: socket.assigns[:username], number: socket.assigns[:user_number], is_admin: socket.assigns[:is_admin], body: clean_content, role: role, timestamp: timestamp()}
-        {:reply, :ok, socket}
+    if ban_time < 0 do
+      {:ok, bad_words} = Redis.command(~w(SMEMBERS bad:words))
+      if socket.assigns[:username] == "Member" || contain_bad_words(bad_words, socket.assigns[:username]) do
+        push socket, "new:msg", %{name: gettext("admin"), is_admin: "true", body: gettext("Your nickname includes sensitive words, please visit accounts page to change your nickname before making a statement.")}
+        {:stop, %{reason: "nickname validate"}, :ok, socket}
       else
-        push socket, "new:msg", %{name: gettext("admin"), is_admin: "true", body: gettext("You can make a statement after %{hour} hours!", hour: "#{Float.round(ban_time/3600, 1)}")}
-        {:stop, %{reason: "have been ban"}, :ok, socket}
+        clean_content = replace_bad_words(bad_words, msg["body"])
+        {:ok, last_content} = Redis.command(~w(HMGET #{socket.assigns[:user_number]} content))
+        if Base.encode64(clean_content) == List.first(last_content) do
+          push socket, "new:msg", %{name: gettext("admin"), is_admin: "true", body: gettext("Repeated statements are forbidden.")}
+          {:stop, %{reason: "repeat words"}, :ok, socket}
+        else
+          if is_tag() do
+            value = "{'name':'SYSTEM','timestamp':#{timestamp()-1}}"
+            Redis.command(~w(ZADD history #{timestamp()-1} #{Base.encode64(value)}))
+            broadcast! socket, "new:msg", %{name: "SYSTEM",timestamp: timestamp()-1}
+          end
+          Redis.command(~w(HMSET #{socket.assigns[:user_number]} timestamp #{timestamp()} content #{Base.encode64(clean_content)}))
+          value = "{'name':'#{socket.assigns[:username]}','number':'#{socket.assigns[:user_number]}','role':'#{role}','is_admin':#{socket.assigns[:is_admin]},'body':'#{clean_content}','timestamp':#{timestamp()}}"
+          Redis.command(~w(ZADD history #{timestamp()} #{Base.encode64(value)}))
+          broadcast! socket, "new:msg", %{name: socket.assigns[:username], number: socket.assigns[:user_number], is_admin: socket.assigns[:is_admin], body: clean_content, role: role, timestamp: timestamp()}
+          {:reply, :ok, socket}
+        end
       end
+    else
+      push socket, "new:msg", %{name: gettext("admin"), is_admin: "true", body: gettext("You can make a statement after %{hour} hours!", hour: "#{Float.round(ban_time/3600, 1)}")}
+      {:stop, %{reason: "have been ban"}, :ok, socket}
     end
   end
 
@@ -138,6 +136,10 @@ defmodule Chat.RoomChannel do
 
   def replace_bad_words([], content) do
     content
+  end
+
+  defp set_role(role, user_number) do
+    Redis.command(~w(SET #{user_number}:role #{role}))
   end
 
   #show timestamp
