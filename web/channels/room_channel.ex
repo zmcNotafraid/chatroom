@@ -78,7 +78,7 @@ defmodule Chat.RoomChannel do
 
   def handle_in("view:ban_reason", msg, socket) do
     {:ok, reason} = Redis.command(~w(GET #{msg["userNumber"]}:ban ))
-    broadcast! socket, "new:msg", %{name: socket.assigns[:username], is_admin: socket.assigns[:is_admin], body: reason}
+    push socket, "new:msg", %{name: socket.assigns[:username], is_admin: socket.assigns[:is_admin], body: reason}
     {:noreply, socket}
   end
 
